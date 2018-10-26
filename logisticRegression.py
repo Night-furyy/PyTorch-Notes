@@ -14,11 +14,7 @@ class Model(torch.nn.Module):
         super(Model, self).__init__()                                                                                                                                 
         self.linear = torch.nn.Linear(1, 1)  # One in and one out
 
-
-
-
-
-def forward(self, x):                                                                                                                                             
+    def forward(self, x):                                                                                                                                             
         """                                                                                                                                                           
         In the forward function we accept a Variable of input data and we must return                                                                                 
         a Variable of output data.                                                                                                                                    
