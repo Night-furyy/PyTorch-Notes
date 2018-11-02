@@ -61,8 +61,8 @@ print("predict 7 hours", 7.0, model(hour_var).item() > 0.5)
 import torch
 from torch.autograd import Variable
 import numpy as np
-#uses a diabetes data set with 8 different features, and i dont hav this dataset lol
-xy = np.loadtxt('./data/diabetes.csv.gz', delimiter=',', dtype=np.float32)
+#uses a diabetes data set with 8 different features, depending on where the file is stored.
+xy = np.loadtxt('./data/diabetes.csv', delimiter=',', dtype=np.float32)
 x_data = Variable(torch.from_numpy(xy[:, 0:-1]))
 y_data = Variable(torch.from_numpy(xy[:, [-1]]))
 
@@ -101,7 +101,7 @@ model = Model()
 # Construct our loss function and an Optimizer. The call to model.parameters()
 # in the SGD constructor will contain the learnable parameters of the two
 # nn.Linear modules which are members of the model.
-criterion = torch.nn.BCELoss(size_average=True)
+criterion = torch.nn.BCELoss(reduction='elementwise_mean')
 optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
 
 # Training loop
@@ -111,7 +111,7 @@ for epoch in range(100):
 
     # Compute and print loss
     loss = criterion(y_pred, y_data)
-    print(epoch, loss.data[0])
+    print(epoch, loss.item())
 
     # Zero gradients, perform a backward pass, and update the weights.
     optimizer.zero_grad()
