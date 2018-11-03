@@ -8,10 +8,10 @@ y_data = Variable(torch.Tensor([[0.], [0.], [1.], [1.]]))
 class Model(torch.nn.Module):                                                                                                                                         
                                                                                                                                                                       
     def __init__(self):                                                                                                                                               
-        """                                                                                                                                                           
-        In the constructor we instantiate nn.Linear module                                                                                                            
-        """                                                                                                                                                           
-        super(Model, self).__init__()                                                                                                                                 
+                                                                                                                                                              
+        #In the constructor we instantiate nn.Linear module                                                                                                            
+                                                                                                                                                                   
+        super().__init__()                                                                                                                                 
         self.linear = torch.nn.Linear(1, 1)  # One in and one out
 
     def forward(self, x):                                                                                                                                             
@@ -32,21 +32,22 @@ model = Model()
 criterion = torch.nn.BCELoss(reduction='elementwise_mean')                                                                                                            
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01)                                                                                                              
                                                                                                                                                                       
-# Training loop                                                                                                                                                       
+# Training 1000 steps                                                                                                                                                       
 for epoch in range(1000):                                                                                                                                             
         # Forward pass: Compute predicted y by passing x to the model                                                                                                 
     y_pred = model(x_data)                                                                                                                                            
                                                                                                                                                                       
     # Compute and print loss                                                                                                                                          
-    loss = criterion(y_pred, y_data)                                                                                                                                  
-    #print(epoch, loss.data[0])                                                                                                                                       
+    loss = criterion(y_pred, y_data)  
+    #optional print out loss
+    #print(epoch, loss.item())                                                                                                                                       
                                                                                                                                                                       
     # Zero gradients, perform a backward pass, and update the weights.                                                                                                
     optimizer.zero_grad()                                                                                                                                             
     loss.backward()                                                                                                                                                   
     optimizer.step()                                                                                                                                                  
                                                                                                                                                                       
-# After training                                                                                                                                                      
+# After training, test                                                                                                                                                      
 hour_var = Variable(torch.Tensor([[1.0]]))                                                                                                                            
 print("predict 1 hour ", 1.0, model(hour_var).item() > 0.5)                                                                                                           
 hour_var = Variable(torch.Tensor([[7.0]]))                                                                                                                            
