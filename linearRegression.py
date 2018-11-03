@@ -5,12 +5,11 @@ from torch.autograd import Variable
 x_data = Variable(torch.Tensor([[1.0], [2.0], [3.0]]))                                                                                                                
 y_data = Variable(torch.Tensor([[2.0], [4.0], [6.0]]))                                                                                                              
 '''
-Creating our Model, which is in the form of a class
-y=2x
+Creating our Model, which is y=2x
 '''
 class Model(torch.nn.Module):                                                                                                                                         
     def __init__(self):                                                                                                                                               
-        super(Model, self).__init__()
+        super().__init__()
         #1 input and 1 output
         self.linear = torch.nn.Linear(1,1)                                                                                                                            
     def forward(self, x):                                                                                                                                             
