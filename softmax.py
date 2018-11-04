@@ -6,10 +6,9 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
 
-# Training settings
 batch_size = 64
 
-# MNIST Dataset
+# MNIST data
 train_dataset = datasets.MNIST(root='./data/mnist_data/',
                                train=True,
                                transform=transforms.ToTensor(),
@@ -19,7 +18,7 @@ test_dataset = datasets.MNIST(root='./data/mnist_data/',
                               train=False,
                               transform=transforms.ToTensor())
 
-# Data Loader (Input Pipeline)
+# Data Loader
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
                                            batch_size=batch_size,
                                            shuffle=True)
@@ -32,7 +31,7 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
 class Net(nn.Module):
 
     def __init__(self):
-        super(Net, self).__init__()
+        super().__init__()
         self.l1 = nn.Linear(784, 520)
         self.l2 = nn.Linear(520, 320)
         self.l3 = nn.Linear(320, 240)
@@ -53,7 +52,7 @@ model = Net()
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.5)
 
-
+#def training
 def train(epoch):
     model.train()
     for batch_idx, (data, target) in enumerate(train_loader):
@@ -67,7 +66,8 @@ def train(epoch):
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item()))
-
+            
+#testing
 def test():
     model.eval()
     test_loss = 0
