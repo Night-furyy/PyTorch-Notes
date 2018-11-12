@@ -1,3 +1,5 @@
+# cnn is much more accurate than softmax
+
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
