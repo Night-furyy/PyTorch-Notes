@@ -14,8 +14,6 @@ test_dataset = datasets.MNIST(root='./data/mnist_data/', train=False, transform=
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=64,shuffle=True)
 
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=64,shuffle=False)
-#test_x = torch.unsqueeze(test_dataset.test_data, dim=1).type(torch.FloatTensor)[:2000]/255.
-#test_y = test_dataset.test_labels[:2000]
 
 class Net(nn.Module):
 
@@ -131,4 +129,4 @@ for epoch in range(1):
 test_output = cnn(test_x[:10])
 pred = torch.max(test_output, 1)[1].data.numpy().squeeze()
 print('Pred:', pred)
-print('Actual:', test_y[:10])
+print('Actual:', test_y[:10].numpy())
