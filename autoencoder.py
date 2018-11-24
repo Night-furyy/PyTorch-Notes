@@ -56,9 +56,3 @@ for epoch in range(3):
 
         if steps % 100 == 0:
             print('Epoch: {} | step: {} | Loss: {:.4f}'.format(epoch, steps, loss.data.numpy()))
-
-
-
-
-
-
