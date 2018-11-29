@@ -6,6 +6,65 @@ import torch.nn as nn
 from torchvision import datasets, transforms
 from torch.autograd import Variable
 
+train_dataset = datasets.MNIST(root='./data/mnist_data', train=True, transform=transforms.ToTensor(), download=False)
+train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=64, shuffle=True, num_workers=2)
+test_data = datasets.MNIST(root='./data/mnist_data', train=False, transform=transforms.ToTensor())
+test_x = Variable(torch.unsqueeze(test_data.test_data, dim=1).type(torch.FloatTensor))[:1000]/255
+test_y = test_data.test_labels[:1000]
+
+class CNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(in_channels=1, out_channels=16, kernel_size=5, stride=1, padding=2),
+            # if stride = 1: padding = (kernel_size - 1)/2
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2),
+        )
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(16, 32, 5, 1, 2),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+        )
+        self.fc = nn.Linear(32 * 7 * 7, 10)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.conv2(x)
+        x = x.view(x.size(0), -1)
+        out = self.fc(x)
+        return out
+
+cnn = CNN()
+
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(cnn.parameters(), lr=0.01)
+
+for epoch in range(1):
+    for step, (x,y) in enumerate(train_loader):
+        b_x = Variable(x)
+        b_y = Variable(y)
+
+        output = cnn(b_x)
+        loss = criterion(output, b_y)
+        
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        if step % 50 == 0:
+            test_output = cnn(test_x)
+            pred_y = torch.max(test_output, 1)[1].data.numpy()
+            accuracy = float((pred_y == test_y.data.numpy()).astype(int).sum()) / float(test_y.size(0))
+            print('Epoch: ', epoch, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy)
+
+
+test_output = cnn(test_x[:10])
+pred = torch.max(test_output, 1)[1].data.numpy().squeeze()
+print('Pred:', pred)
+print('Actual:', test_y[:10].numpy())
+
+
 """
 train_dataset = datasets.MNIST(root='./data/mnist_data/', train=True, transform=transforms.ToTensor(), download=False)
 
@@ -72,61 +131,3 @@ for epoch in range(1, 4):
     test()
 
 """
-
-train_dataset = datasets.MNIST(root='./data/mnist_data', train=True, transform=transforms.ToTensor(), download=False)
-train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=64, shuffle=True, num_workers=2)
-test_data = datasets.MNIST(root='./data/mnist_data', train=False, transform=transforms.ToTensor())
-test_x = Variable(torch.unsqueeze(test_data.test_data, dim=1).type(torch.FloatTensor))[:1000]/255
-test_y = test_data.test_labels[:1000]
-
-class CNN(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.conv1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=16, kernel_size=5, stride=1, padding=2),
-            # if stride = 1: padding = (kernel_size - 1)/2
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
-        )
-        self.conv2 = nn.Sequential(
-            nn.Conv2d(16, 32, 5, 1, 2),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-        )
-        self.fc = nn.Linear(32 * 7 * 7, 10)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.conv2(x)
-        x = x.view(x.size(0), -1)
-        out = self.fc(x)
-        return out
-
-cnn = CNN()
-
-criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(cnn.parameters(), lr=0.01)
-
-for epoch in range(1):
-    for step, (x,y) in enumerate(train_loader):
-        b_x = Variable(x)
-        b_y = Variable(y)
-
-        output = cnn(b_x)
-        loss = criterion(output, b_y)
-        
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-
-        if step % 50 == 0:
-            test_output = cnn(test_x)
-            pred_y = torch.max(test_output, 1)[1].data.numpy()
-            accuracy = float((pred_y == test_y.data.numpy()).astype(int).sum()) / float(test_y.size(0))
-            print('Epoch: ', epoch, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy)
-
-
-test_output = cnn(test_x[:10])
-pred = torch.max(test_output, 1)[1].data.numpy().squeeze()
-print('Pred:', pred)
-print('Actual:', test_y[:10].numpy())
