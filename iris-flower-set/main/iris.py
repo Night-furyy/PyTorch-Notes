@@ -3,10 +3,8 @@ import torch.nn as nn
 from torch.autograd import Variable
 import torch.nn.functional as F
 import numpy as np
-import torch.utils.data as Data
-import torchvision.transforms as transform
 import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 train_data = pd.read_csv('./data/iris_data/Iris_train.csv')
 train_data.loc[train_data['species'] == 'Iris-setosa', 'species'] = 0
