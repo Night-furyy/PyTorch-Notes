@@ -10,8 +10,8 @@ df = pd.read_csv('./data/boston_housing_data/train.csv')
 #data = data.apply(pd.to_numeric)
 train_array = df.values
 x_train = train_array[:,1:14]
-y_train = train_array[:,14]
-
+y_train = train_array[:,14:]
+print(y_train)
 EPOCH = 501
 HL = 20
 
@@ -38,7 +38,7 @@ for epoch in range(EPOCH):
     #print(Y.shape)
     #print(pred_y.shape)
     
-    loss = criterion(pred_y.view(-1), Y.float())
+    loss = criterion(pred_y, Y)
      
     optimizer.zero_grad()
     loss.backward()
@@ -51,9 +51,9 @@ for epoch in range(EPOCH):
 
 def test():
     model.eval()
-    df_test = pd.read_csv('./data/boston_housing_data/test.csv')
-    test_array = df_test.values
-    x_test = test_array[:, 1:14]
+    df_test = pd.read_csv('./data/boston_housing_data/test.csv', error_bad_lines=False)
+    test_array = df_test.iloc[:, 1:14].values
+    x_test = test_array
 
     X = Variable(torch.from_numpy(x_test).float())
     pred_y = model(X)
@@ -61,5 +61,4 @@ def test():
     print('Result: \n {}'.format(pred_y))
 
 test()
-
 
